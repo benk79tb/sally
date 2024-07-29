@@ -104,7 +104,7 @@ def launch(args, expire=0.0):
     doers += serving.setup(hby, alias=alias, httpPort=httpPort, hook=hook, auth=auth,
                            listen=listen, timeout=timeout, retry=retry, mappings=mappings)
 
-    print(f"Gatekeeper v{sally.__version__} server listening on {httpPort}")
+    print(f"Cop v{sally.__version__} server listening on {httpPort}")
     directing.runController(doers=doers, expire=expire)
 
 

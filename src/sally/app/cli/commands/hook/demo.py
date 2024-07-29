@@ -51,17 +51,17 @@ class Listener:
             rep: falcon.Response HTTP response
 
         """
-        print('Gatekeeper | received request')
+        print('Cop | received request')
         body = req.get_media()
         match body['action']:
             case 'iss':
-                print(f"Gatekeeper | Valid Credential. Validated at {datetime.datetime.now()}")
+                print(f"Cop | Valid Credential. Validated at {datetime.datetime.now()}")
                 self.debug_request(req, body)
             case 'rev':
                 schemaSaid = body['data']['schema']
                 credentialSaid = body['data']['credential']
                 revocationTimestamp = body['data']['revocationTimestamp']
-                print(f"Gatekeeper | Invalid credential {credentialSaid} with schema {schemaSaid}. Revoked on: {revocationTimestamp}")
+                print(f"Cop | Invalid credential {credentialSaid} with schema {schemaSaid}. Revoked on: {revocationTimestamp}")
                 self.debug_request(req, body)
             case _:
                 print('Unexpected action type')

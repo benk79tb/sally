@@ -32,11 +32,11 @@ from setuptools import find_packages, setup
 
 setup(
     name='sally',
-    version='0.6.1',  # also change in src/sally/__init__.py
+    version='0.7.0',  # also change in src/sally/__init__.py
     license='Apache Software License 2.0',
-    description='Abydos Gatekeeper',
-    long_description="Abydos Gatekeeper server that responds to credential presentations by signaling via webhooks.",
-    author='Philip S. Feairheller, Kent Bull',
+    description='Cop Verifier',
+    long_description="Cop Verifier server that responds to credential presentations by signaling via webhooks.",
+    author='Philip S. Feairheller, Kent Bull, Benjamin Keller',
     author_email='pfeairheller@gmail.com, kent@kentbull.com',
     url='https://github.com/kentbull/sally',
     packages=find_packages('src'),
