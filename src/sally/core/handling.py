@@ -352,7 +352,7 @@ class Communicator(doing.DoDoer):
 
 
     @staticmethod
-    def idCardPayload(creder, reger):
+    def idCardPayload(creder):
         a = creder.crd["a"]
         data = dict(
             schema=creder.schema,
