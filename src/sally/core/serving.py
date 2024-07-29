@@ -48,8 +48,8 @@ def setup(hby, *, alias, httpPort, hook, auth, listen=False, timeout=10, retry=3
         print(f"Using existing hab for alias {alias}")
 
     print(f"Using hab {hab.name}:{hab.pre}")
-    print(f"\tCESR Qualifed Base64 Public Key:  {hab.kever.serder.verfers[0].qb64}")
-    print(f"\tPlain Base64 Public Key:          {encodeB64(hab.kever.serder.verfers[0].raw).decode('utf-8')}")
+    # print(f"\tCESR Qualifed Base64 Public Key:  {hab.kever.serder.verfers[0].qb64}")
+    # print(f"\tPlain Base64 Public Key:          {encodeB64(hab.kever.serder.verfers[0].raw).decode('utf-8')}")
     mbx = storing.Mailboxer(name=hby.name)
     reger = viring.Reger(name=hab.name, db=hab.db, temp=False)
     rep = storing.Respondant(hby=hby, mbx=mbx)
