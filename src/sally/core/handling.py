@@ -26,8 +26,7 @@ QVI_SCHEMA = "EBfdlu8R27Fbx-ehrqwImnK-8Cm79sqbAQ4MmvEAYqao"
 LE_SCHEMA = "ENPXp1vQzRF6JwIuS-mp2U8Uf1MoADoP_GqQ62VsDZWY"
 OOR_AUTH_SCHEMA = "EKA57bKBKxr_kN7iN5i7lMUxpMG-s19dRcmov1iDxz-E"
 OOR_SCHEMA = "EBNaNu-M9P5cgrnfl2Fvymy4E_jvxxyjb70PRtiANlJy"
-
-CredentialMapping = namedtuple('CredentialMapping', 'credential_type said')
+IDCARD_SCHEMA = "EEYMNgyQNHWrsO4m65Px84M93o2url6aUpTFqNdMZdKt"
 
 
 def loadHandlers(cdb, exc):
@@ -117,7 +116,7 @@ class Communicator(doing.DoDoer):
 
     """
 
-    def __init__(self, hby, hab, cdb, reger, auth, hook, timeout=10, retry=3.0, mappings=[]):
+    def __init__(self, hby, hab, cdb, reger, auth, hook, timeout=10, retry=3.0):
         """
 
         Create a communicator capable of persistent processing of messages and performing
@@ -143,15 +142,6 @@ class Communicator(doing.DoDoer):
         self.timeout = timeout
         self.retry = retry
         self.clients = dict()
-        self.mappings: list[CredentialMapping] = mappings
-        for mapping in self.mappings:
-            print(f'Configured mapping of | {mapping.said} | {mapping.credential_type}')
-        self.schema_handlers: dict = {
-            IDCARD_TYPE: self.validateIdCard
-        }
-        self.payload_handlers: dict = {
-            IDCARD_TYPE: self.idCardPayload
-        }
 
         super(Communicator, self).__init__(doers=[doing.doify(self.escrowDo)])
 
@@ -171,13 +161,10 @@ class Communicator(doing.DoDoer):
                     regk = creder.status
                     state = self.reger.tevers[regk].vcState(creder.said)
                     if state is None or state.ked['et'] not in (coring.Ilks.iss, coring.Ilks.bis):
-                        self.cdb.recv.pin(keys=(said, dater.qb64), val=creder)
                         raise kering.InvalidCredentialStateError(f"Revoked credential {creder.said} being presented")
 
-                    handler_type = self.resolve_said_to_type(creder.schema)
-                    if handler_type in self.schema_handlers.keys():
-                        handler = self.schema_handlers[handler_type]
-                        handler(creder)
+                    if creder.schema == IDCARD_SCHEMA:
+                        self.validateIdCard(creder)
                     else:
                         raise kering.ValidationError(f"credential {creder.said} is of unsupported schema"
                                                      f" {creder.schema} from issuer {creder.issuer}")
@@ -193,17 +180,6 @@ class Communicator(doing.DoDoer):
                 finally:
                     self.cdb.iss.rem(keys=(said,))
 
-    def resolve_said_to_type(self, schema_said):
-        for mapping in self.mappings:
-            if mapping.said == schema_said:
-                return mapping.credential_type
-        raise kering.ValidationError(f"no mapping found for schema {schema_said}")
-
-    def resolve_type_to_said(self, credential_type):
-        for mapping in self.mappings:
-            if mapping.credential_type == credential_type:
-                return mapping.said
-        raise kering.ValidationError(f"no mapping found for schema {credential_type}")
 
     def processRevocations(self):
 
@@ -238,10 +214,8 @@ class Communicator(doing.DoDoer):
                 resource = creder.schema
                 actor = creder.issuer
                 if action == "iss":  # presentation of issued credential
-                    handler_type = self.resolve_said_to_type(creder.schema)
-                    if handler_type in self.payload_handlers.keys():
-                        handler = self.payload_handlers[handler_type]
-                        data = handler(creder, self.reger)
+                    if creder.schema == IDCARD_SCHEMA:
+                        data = self.idCardPayload(creder)
                     else:
                         raise kering.ValidationError(f"credential {creder.said} is of unsupported schema"
                                                      f" {creder.schema} from issuer {creder.issuer}")
@@ -369,7 +343,7 @@ class Communicator(doing.DoDoer):
         self.clients[said] = (client, clientDoer)
 
     def validateIdCard(self, creder):
-        card_id_said = self.resolve_type_to_said(IDCARD_TYPE)
+        card_id_said = IDCARD_SCHEMA
         if creder.schema != card_id_said:
             raise kering.ValidationError(f'Invalid schema SAID {creder.schema} for {IDCARD_TYPE} '
                                          f'credential SAID: {card_id_said}')
