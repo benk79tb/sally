@@ -300,6 +300,11 @@ class Communicator(doing.DoDoer):
             resource (str): the resource type that triggered the event
 
         """
+
+        raw = json.dumps(data).encode("utf-8")
+        print(f"Valid credential {raw}")
+
+        return
         purl = parse.urlparse(self.hook)
         client = http.clienting.Client(hostname=purl.hostname, port=purl.port)
         clientDoer = http.clienting.ClientDoer(client=client)
@@ -351,6 +356,7 @@ class Communicator(doing.DoDoer):
         if not creder.issuer == self.auth:
             raise kering.ValidationError("CardId credential not issued by known valid issuer")
 
+        print(f"Validated {IDCARD_TYPE} credential {creder.said} from issuer {creder.issuer}")
 
     @staticmethod
     def idCardPayload(creder):

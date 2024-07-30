@@ -42,17 +42,17 @@ def setup(hby, *, alias, httpPort, hook, auth, listen=False, timeout=10, retry=3
     # make hab
     hab = hby.habByName(name=alias)
     if hab is None:
-        print(f"Making new hab for alias {alias}")
+        # print(f"Making new hab for alias {alias}")
         hab = hby.makeHab(name=alias, transferable=True)
-    else:
-        print(f"Using existing hab for alias {alias}")
+    # else:
+    #     print(f"Using existing hab for alias {alias}")
 
-    print(f"Using hab {hab.name}:{hab.pre}")
+    # print(f"Using hab {hab.name}:{hab.pre}")
 
-    print("Attributes of hab.kever.serder:")
-    for attr in dir(hab.kever.serder):
-        if not attr.startswith('_'):
-            print(f"\t{attr}: {getattr(hab.kever.serder, attr)}")
+    # print("Attributes of hab.kever.serder:")
+    # for attr in dir(hab.kever.serder):
+    #     if not attr.startswith('_'):
+    #         print(f"\t{attr}: ")
     # print(f"\tCESR Qualifed Base64 Public Key:  {hab.kever.serder.verfers[0].qb64}")
     # print(f"\tPlain Base64 Public Key:          {encodeB64(hab.kever.serder.verfers[0].raw).decode('utf-8')}")
     mbx = storing.Mailboxer(name=hby.name)

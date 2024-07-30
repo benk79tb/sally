@@ -4,7 +4,7 @@ sally.cli.commands module
 
 """
 import argparse
-
+import keri
 from keri.app import keeping, habbing, directing, configing, oobiing
 from keri.app.cli.common import existing
 
@@ -72,6 +72,9 @@ def launch(args, expire=0.0):
                         reopen=True)
 
     aeid = ks.gbls.get('aeid')
+
+    print(f"aeid = {aeid}")
+    print(keri.__version__)
 
     cf = None
     if aeid is None:
