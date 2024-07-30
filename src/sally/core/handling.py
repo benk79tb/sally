@@ -216,6 +216,7 @@ class Communicator(doing.DoDoer):
                 if action == "iss":  # presentation of issued credential
                     if creder.schema == IDCARD_SCHEMA:
                         data = self.idCardPayload(creder)
+                        print(f"credential {creder.said} is of schema {creder.schema} from issuer {creder.issuer}")
                     else:
                         raise kering.ValidationError(f"credential {creder.said} is of unsupported schema"
                                                      f" {creder.schema} from issuer {creder.issuer}")

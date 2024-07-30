@@ -48,6 +48,10 @@ def setup(hby, *, alias, httpPort, hook, auth, listen=False, timeout=10, retry=3
         print(f"Using existing hab for alias {alias}")
 
     print(f"Using hab {hab.name}:{hab.pre}")
+
+    print("Keys and values of hab.kever.serder:")
+    for key, value in hab.kever.serder.items():
+        print(f"\t{key}: {value}")
     # print(f"\tCESR Qualifed Base64 Public Key:  {hab.kever.serder.verfers[0].qb64}")
     # print(f"\tPlain Base64 Public Key:          {encodeB64(hab.kever.serder.verfers[0].raw).decode('utf-8')}")
     mbx = storing.Mailboxer(name=hby.name)
