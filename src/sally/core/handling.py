@@ -210,42 +210,48 @@ class Communicator(doing.DoDoer):
     def processReceived(self, db, action):
 
         for (said, dates), creder in db.getItemIter():
-            if said not in self.clients:
-                resource = creder.schema
-                actor = creder.issuer
-                if action == "iss":  # presentation of issued credential
-                    if creder.schema == IDCARD_SCHEMA:
-                        data = self.idCardPayload(creder)
-                        print(f"credential {creder.said} is of schema {creder.schema} from issuer {creder.issuer}")
-                    else:
-                        raise kering.ValidationError(f"credential {creder.said} is of unsupported schema"
-                                                     f" {creder.schema} from issuer {creder.issuer}")
-                else:  # revocation of credential
-                    data = self.revokePayload(creder)
-
-                self.request(creder.said, resource, action, actor, data)
-                continue
-
-            (client, clientDoer) = self.clients[said]
-            if client.responses:
-                response = client.responses.popleft()
-                self.remove([clientDoer])
-                client.close()
-                del self.clients[said]
-
-                if 200 <= response["status"] < 300:
-                    db.rem(keys=(said, dates))
-                    self.cdb.ack.pin(keys=(said,), val=creder)
+            # if said not in self.clients:
+            resource = creder.schema
+            actor = creder.issuer
+            if action == "iss":  # presentation of issued credential
+                if creder.schema == IDCARD_SCHEMA:
+                    data = self.idCardPayload(creder)
+                    print(f"credential {creder.said} is of schema {creder.schema} from issuer {creder.issuer}")
                 else:
-                    dater = coring.Dater(qb64=dates)
-                    now = helping.nowUTC()
-                    if now - dater.datetime > datetime.timedelta(minutes=self.timeout):
-                        db.rem(keys=(said, dates))
+                    raise kering.ValidationError(f"credential {creder.said} is of unsupported schema"
+                                                    f" {creder.schema} from issuer {creder.issuer}")
+            else:  # revocation of credential
+                data = self.revokePayload(creder)
+
+            self.request(creder.said, resource, action, actor, data)
+                # continue
+
+
+            db.rem(keys=(said, dates))
+            self.cdb.ack.pin(keys=(said,), val=creder)
+
+
+
+            # (client, clientDoer) = self.clients[said]
+            # if client.responses:
+            #     response = client.responses.popleft()
+            #     self.remove([clientDoer])
+            #     client.close()
+            #     del self.clients[said]
+
+            #     if 200 <= response["status"] < 300:
+            #         db.rem(keys=(said, dates))
+            #         self.cdb.ack.pin(keys=(said,), val=creder)
+            #     else:
+            #         dater = coring.Dater(qb64=dates)
+            #         now = helping.nowUTC()
+            #         if now - dater.datetime > datetime.timedelta(minutes=self.timeout):
+            #             db.rem(keys=(said, dates))
 
     def processAcks(self):
         for (said,), creder in self.cdb.ack.getItemIter():
             # TODO: generate EXN ack message with credential information
-            print(f"ACK for credential {said} will be sent to {creder.issuer}")
+            # print(f"ACK for credential {said} will be sent to {creder.issuer}")
             self.cdb.ack.rem(keys=(said,))
 
     def escrowDo(self, tymth, tock=1.0):
